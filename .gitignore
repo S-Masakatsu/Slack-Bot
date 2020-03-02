@@ -1,3 +1,16 @@
+# ---------------------------------------------------
+# Postscript
+# ---------------------------------------------------
+# Mac
+.DS_Store
+# env file
+*.env
+!.env
+# token
+config/tokens/*
+!token-sample
+# ---------------------------------------------------
+
 # Binaries for programs and plugins
 *.exe
 *.exe~

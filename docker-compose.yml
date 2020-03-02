@@ -1,0 +1,27 @@
+version: '3.7'
+
+services: 
+  app:
+    container_name: slackbot-app
+    build: 
+      context: .
+      dockerfile: docker/golang/Dockerfile_${DOCKER_APP_ENV}
+    env_file: 
+      - docker/golang/.my.env
+    secrets:
+      - workspace-token
+      - verification-token
+      - bot-user-token
+    tty: true
+    ports: 
+      - 8080:8080
+    volumes: 
+      - ./app:/app
+
+secrets:
+  workspace-token:
+    file: ${TOKENS_PATH}/${WORKSPACE_FILE}
+  verification-token:
+    file: ${TOKENS_PATH}/${VERIFICATION_FILE}
+  bot-user-token:
+    file: ${TOKENS_PATH}/${BOT_USER_ACCESS_FIKE}

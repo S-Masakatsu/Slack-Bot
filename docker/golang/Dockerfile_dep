@@ -3,7 +3,7 @@ FROM golang:1.14.0-alpine3.11
 
 SHELL ["/bin/ash", "-c"]
 ENV GO111MODULE=on
-EXPOSE 8080
+EXPOSE 3000
 
 RUN mkdir public && mkdir app
 ADD ./app /app

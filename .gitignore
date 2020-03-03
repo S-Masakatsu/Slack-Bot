@@ -5,8 +5,8 @@
 .DS_Store
 # env file
 *.env
-/*
-!.env.sample
+.env
+!.sample
 # token
 config/tokens/*
 !token-sample

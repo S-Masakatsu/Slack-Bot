@@ -45,3 +45,28 @@ $ docker exec -it slackbot-app /bin/ash
   # cat $WORKSPACE_TOKEN_PATH
   ```
 
+## ■ ngrok
+
+1. Connect your account
+
+    ``` shell
+    $ cd ngrok
+    $ ./ngrok authtoken <Token>
+    ```
+
+1. Start Docker container for production
+
+    Make Docker a production environment
+    ``` env
+    DOCKER_APP_ENV=dep
+    ```
+
+    ``` shell
+    $ docker-compose up --build
+    ```
+
+1. Fire it up
+
+    ``` shell
+    $ ./ngrok http -host-header="0.0.0.0:3000" 3000
+    ```

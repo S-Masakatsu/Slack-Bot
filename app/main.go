@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"regexp"
 	"strings"
 
 	"github.com/nlopes/slack"
@@ -74,12 +73,12 @@ func (s *Slscks) eventPoint(w http.ResponseWriter, r *http.Request) {
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(r.Body)
 	body := buf.String()
-	evntsAPI, err := slackevents.ParseEvent(json.RawMessage(body), slackevents.OptionVerifyToken(&slackevents.TokenComparator{VerificationToken: s.Vtoken}))
+	eventsAPI, err := slackevents.ParseEvent(json.RawMessage(body), slackevents.OptionVerifyToken(&slackevents.TokenComparator{VerificationToken: s.Vtoken}))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 
-	if evntsAPI.Type == slackevents.URLVerification {
+	if eventsAPI.Type == slackevents.URLVerification {
 		var r *slackevents.ChallengeResponse
 		err := json.Unmarshal([]byte(body), &r)
 		if err != nil {
@@ -89,33 +88,15 @@ func (s *Slscks) eventPoint(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(r.Challenge))
 	}
 
-	if evntsAPI.Type == slackevents.CallbackEvent {
-		innerEvent := evntsAPI.InnerEvent
+	api := slack.New(s.Token)
+	if eventsAPI.Type == slackevents.CallbackEvent {
+		innerEvent := eventsAPI.InnerEvent
 		switch ev := innerEvent.Data.(type) {
-		case *slackevents.MessageEvent:
-			if ev.User != s.BotNmae && parse(ev.Text) != nil {
-				api := slack.New(s.Token)
-				for _, name := range parse(ev.Text) {
-					text := "Increment " + strings.TrimRight(name, "++ ")
-					api.PostMessage(ev.Channel, slack.MsgOptionText(text, false))
-				}
-			}
+		case *slackevents.AppMentionEvent: // Botユーザーへのメンションの場合
+			log.Println("AppMentionEvent")
+			api.PostMessage(ev.Channel, slack.MsgOptionText("やあ。ぼくはホリネズミのGopherだよ。", false))
 		}
 	}
-}
-
-func getenv(name string) string {
-	v := os.Getenv(name)
-	if v == "" {
-		panic("missing required environment variable " + name)
-	}
-	return v
-}
-
-func parse(text string) []string {
-	r := regexp.MustCompile(`\S+\+\+\s`)
-	names := r.FindAllString(text, -1)
-	return names
 }
 
 func main() {

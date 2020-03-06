@@ -6,10 +6,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/nlopes/slack"
 	"github.com/nlopes/slack/slackevents"
@@ -26,6 +28,13 @@ type Slscks struct {
 	Vtoken  string
 	BotNmae string
 }
+
+type KeyWard struct {
+	Key    string
+	Return func() string
+}
+
+type KeyWards []KeyWard
 
 func init() {
 	// 環境変数：BOT_UNAMEを設定
@@ -94,9 +103,41 @@ func (s *Slscks) eventPoint(w http.ResponseWriter, r *http.Request) {
 		switch ev := innerEvent.Data.(type) {
 		case *slackevents.AppMentionEvent: // Botユーザーへのメンションの場合
 			log.Println("AppMentionEvent")
-			api.PostMessage(ev.Channel, slack.MsgOptionText("やあ。ぼくはホリネズミのGopherだよ。", false))
+			txt := ev.Text
+			api.PostMessage(ev.Channel, slack.MsgOptionText(postMessage(txt), false))
 		}
 	}
+}
+
+func postMessage(text string) (msg string) {
+	for _, k := range keyWord {
+		if strings.Contains(text, k.Key) {
+			msg = k.Return()
+		}
+	}
+	return
+}
+
+var keyWord = KeyWards{
+	KeyWard{
+		"やあ",
+		hello,
+	},
+	KeyWard{
+		"おみくじ",
+		returnFortune,
+	},
+}
+
+func hello() string {
+	return "やあ。ぼくはホリネズミのGopherだよ。"
+}
+
+func returnFortune() string {
+	f := []string{"大吉", "吉", "中吉", "末吉", "凶"}
+	rand.Seed(time.Now().UnixNano())
+	msg := []string{"今日は、", f[rand.Intn(len(f)-1)], "だよ！"}
+	return strings.Join(msg, "")
 }
 
 func main() {

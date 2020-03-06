@@ -30,3 +30,5 @@ config/tokens/*
 
 # Go Modules
 *.sum
+*.mod
+!app/go.mod

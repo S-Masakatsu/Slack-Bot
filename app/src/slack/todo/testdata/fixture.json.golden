@@ -1,0 +1,131 @@
+  
+[
+  {
+    "_comment": "テスト対象関数名:[{name:テスト名, テストデータ...}]",
+    "Add":[
+      {
+        "name":"Add",
+        "todo": "to call",
+        "expected": "to call"
+      },
+      {
+        "name":"Add",
+        "todo": "go shopping",
+        "expected": "go shopping"
+      },
+      {
+        "name":"Add",
+        "todo": "do reading",
+        "expected": "do reading"
+      },
+      {
+        "name":"Add",
+        "todo": "go work",
+        "expected": "go work"
+      }
+    ],
+    "IsDone":[
+      {
+        "name":"true Check",
+        "done":true,
+        "expected":true
+      },
+      {
+        "name":"false Check",
+        "done":false,
+        "expected":false
+      }
+    ],
+    "IsNotDone":[
+      {
+        "name":"true Check",
+        "done":true,
+        "expected":false
+      },
+      {
+        "name":"false Check",
+        "done":false,
+        "expected":true
+      }
+    ],
+    "List":[
+      {
+        "name":"List",
+        "expecteds":[
+          {
+            "todo": "to call"
+          },
+          {
+            "todo": "go shopping"
+          },
+          {
+            "todo": "do reading"
+          },
+          {
+            "todo": "go work"
+          }
+        ]
+      }
+    ],
+    "Done":[
+      {
+        "name":"Done",
+        "todo": "go shopping"
+      },
+      {
+        "name":"Done",
+        "todo": "do reading"
+      },
+      {
+        "name": "List",
+        "expecteds":[
+          {
+            "todo": "to call"
+          },
+          {
+            "todo": "go work"
+          }
+        ]
+      }
+    ],
+    "DoneList":[
+      {
+        "name":"DoneList",
+        "expecteds":[
+          {
+            "todo": "go shopping"
+          },
+          {
+            "todo": "do reading"
+          }
+        ]
+      }
+    ],
+    "Del":[
+      {
+        "name":"Del",
+        "todo":"go shopping"
+      },
+      {
+        "name":"Del",
+        "todo":"to call"
+      },
+      {
+        "name": "List",
+        "expecteds":[
+          {
+            "todo": "go work"
+          }
+        ]
+      },
+      {
+        "name":"DoneList",
+        "expecteds":[
+          {
+            "todo": "do reading"
+          }
+        ]
+      }
+    ]
+  }
+]

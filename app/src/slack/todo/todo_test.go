@@ -123,6 +123,26 @@ func TestTodos(t *testing.T) {
 	// Read test data from JSON file.
 	fixture := getDecodeJSON(t, testDataPath)
 
+	// Todoリストに未完了のTodoがない場合にerrorになるかのサブテスト
+	t.Run("NotList", func(t *testing.T) {
+		name := "NotTodoList"
+		p, e := "nil", "Not nil"
+		t.Logf("%v:%v / pattern: %v / expected: %v\n", 0, name, p, e)
+		if _, err := List(); err == nil {
+			t.Errorf("Error: Not equal\npattern : %v\nexpected: %v\nactual  : %v\nTest    : %v", 0, e, "nil", name)
+		}
+	})
+
+	// Todoリストに完了済みのTodoがない場合にerrorになるかのサブテスト
+	t.Run("NotDoneList", func(t *testing.T) {
+		name := "NotTodoDoneList"
+		p, e := "nil", "Not nil"
+		t.Logf("%v:%v / pattern: %v / expected: %v\n", 0, name, p, e)
+		if _, err := List(); err == nil {
+			t.Errorf("Error: Not equal\npattern : %v\nexpected: %v\nactual  : %v\nTest    : %v", 0, e, "nil", name)
+		}
+	})
+
 	// Add Todo
 	t.Run("Add", func(t *testing.T) {
 		testAdd(t, fixture)
@@ -180,13 +200,13 @@ func testAdd(t *testing.T, fixture []Fixture) {
 // 未完了のTodoリストの結果をテストするサブテストです。
 func testList(t *testing.T, testName string, todos Expecteds) {
 	t.Helper()
-	result := List()
+	result, _ := List()
 	for idx, key := range todos {
 		actT := result[idx]
 		expT := key.Todo
 		t.Logf("%v:%v / expected: %v / actual: %v\n", idx, testName, expT, actT)
 		if expT != actT {
-			t.Errorf("Error: Not equal\npattern : %d\nexpected: %v\nactual  : %v\nTest    : %v", idx, expT, actT, "TestList")
+			t.Errorf("Error: Not equal\npattern : %d\nexpected: %v\nactual  : %v\nTest    : %v", idx, expT, actT, testName)
 		}
 	}
 }
@@ -197,7 +217,9 @@ func testDone(t *testing.T, fixture []Fixture, length int) {
 	// Complete Todo tasks
 	for idx, key := range fixture[0].Done {
 		t.Logf("%v:%v / actual: %v\n", idx, key.TestName.Name, key.Todo)
-		Done(key.Todo)
+		if !Done(key.Todo) {
+			t.Errorf("Error: Not equal\npattern : %d\nexpected: %v\nactual  : %v\nTest    : %v", idx, true, false, key.TestName)
+		}
 		if idx == length-2 {
 			break
 		}
@@ -207,13 +229,13 @@ func testDone(t *testing.T, fixture []Fixture, length int) {
 // 完了済みのTodoリストの結果をテストするサブテストです。
 func testDoneList(t *testing.T, testName string, todos Expecteds) {
 	t.Helper()
-	result := DoneList()
+	result, _ := DoneList()
 	for idx, key := range todos {
 		actT := result[idx]
 		expT := key.Todo
 		t.Logf("%v:%v / expected: %v / actual: %v\n", idx, testName, expT, actT)
 		if expT != actT {
-			t.Errorf("Error: Not equal\npattern : %d\nexpected: %v\nactual  : %v\nTest    : %v", idx, expT, actT, "TestList")
+			t.Errorf("Error: Not equal\npattern : %d\nexpected: %v\nactual  : %v\nTest    : %v", idx, expT, actT, testName)
 		}
 	}
 }
@@ -223,7 +245,9 @@ func testDel(t *testing.T, fixture []Fixture, length int) {
 	t.Helper()
 	for idx, key := range fixture[0].Del {
 		t.Logf("%v:%v / actual: %v\n", idx, key.TestName.Name, key.Todo)
-		Del(key.Todo)
+		if !Del(key.Todo) {
+			t.Errorf("Error: Not equal\npattern : %d\nexpected: %v\nactual  : %v\nTest    : %v", idx, true, false, key.TestName)
+		}
 		if idx == length-3 {
 			break
 		}

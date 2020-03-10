@@ -8,6 +8,8 @@ import (
 	"os"
 	"slack/config"
 	"strings"
+
+	m "middlewares"
 )
 
 func init() {
@@ -18,7 +20,7 @@ func init() {
 }
 
 func main() {
-	port := []string{":", os.Getenv("APP_PORT")}
+	port := []string{":", m.GetEnv("APP_PORT")}
 	fmt.Println("[INFO] Server listening")
 	if err := http.ListenAndServe(strings.Join(port, ""), nil); err != nil {
 		log.Panicln(err)

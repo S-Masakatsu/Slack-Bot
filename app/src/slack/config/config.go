@@ -8,6 +8,8 @@ import (
 	"net/url"
 	"os"
 	"strings"
+
+	m "middlewares"
 )
 
 const (
@@ -37,17 +39,6 @@ func init() {
 	setBotName()
 }
 
-// 指定した環境変数から値を取り出し返します。
-// 環境変数が存在しない場合はerrorが発生します。
-func getEnv(name string) (v string) {
-	v = os.Getenv(name)
-	if v == "" {
-		err := []string{"missing required environment variable: ", name}
-		panic(strings.Join(err, ""))
-	}
-	return
-}
-
 // 指定したパスからファイルを読み取ります。
 // 呼び出しに失敗した場合はerrorが発生します。
 func getToken(path string) string {
@@ -64,10 +55,10 @@ func getToken(path string) string {
 func setBotName() {
 	// Set the parameters.
 	par := url.Values{}
-	t := getToken(getEnv(workPath))
+	t := getToken(m.GetEnv(workPath))
 	par.Add("token", t)
 	// Creates a ULI based on the set parameters and sends a request to the API.
-	url := []string{getEnv(api), "?", par.Encode()}
+	url := []string{m.GetEnv(api), "?", par.Encode()}
 	r, err := http.Get(strings.Join(url, ""))
 	if err != nil {
 		panic(err)
@@ -87,9 +78,9 @@ func setBotName() {
 
 // 構造体 SlsckItems を設定して、返します。
 func GetSlackItem() (s SlsckItems) {
-	token := getToken(getEnv(tokenPath))
-	vtoken := getToken(getEnv(vtokenPath))
-	name := getEnv(envBot)
+	token := getToken(m.GetEnv(tokenPath))
+	vtoken := getToken(m.GetEnv(vtokenPath))
+	name := m.GetEnv(envBot)
 	s = SlsckItems{
 		Token:   token,
 		Vtoken:  vtoken,
